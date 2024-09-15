@@ -1,0 +1,34 @@
+services:
+  project2-db-service:
+    container_name: project2-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ratsql
+      POSTGRES_DB: project2
+    ports:
+      - "5434:5432"
+    volumes:
+      - project2-postgres-volume:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - project2-network
+
+  spring-service:
+    container_name: project2-container
+    build:
+      context: .
+    image: project2-image
+    ports:
+      - "8082:8080"
+    networks:
+      - project2-network
+    depends_on:
+      - project2-db-service
+
+volumes:
+  project2-postgres-volume:
+
+networks:
+  project2-network:
+    driver: bridge

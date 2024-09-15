@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавление человека</title>
+</head>
+<body>
+
+<form th:method="POST" th:action="@{/people}" th:object="${person}">
+    <label for="name">Введите имя: </label>
+    <input type="text" th:field="*{name}" id="name">
+    <div style="color: #f85050" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name error</div>
+    <br>
+
+    <label for="surname">Введите фамилию: </label>
+    <input type="text" th:field="*{surname}" id="surname">
+    <div style="color: #f85050" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname error</div>
+    <br>
+
+    <label for="lastName">Введите отчество (при наличии): </label>
+    <input type="text" th:field="*{lastName}" id="lastName">
+    <div style="color: #f85050" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}">Lastname error</div>
+    <br>
+
+    <label for="birthYear">Введите год рождения: </label>
+    <input type="text" th:field="*{birthYear}" id="birthYear">
+    <div style="color: #f85050" th:if="${#fields.hasErrors('birthYear')}" th:errors="*{birthYear}">Birth year error</div>
+
+    <br><br>
+
+    <input type="submit" value="Добавить">
+</form>
+
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Список книг</title>
+</head>
+<body>
+
+    <form th:method="GET" th:action="@{/books/search}">
+        <input name="keyword" id="search" type="text">
+        <input type="submit" value="Поиск">
+    </form>
+    <br>
+
+    <div th:each="book : ${books}">
+        <a th:href="@{/books/{id}(id=${book.getId()})}"
+           th:text="${book.getTitle() + ', ' + book.getAuthor() + ', ' + book.getProductionYear()}"></a>
+    </div>
+
+    <br>
+
+    <form th:method="GET" th:action="@{/books}">
+        <label>
+            <input type="checkbox" name="sort_by_year" th:checked="${isSorted}" /> Сортировать по году
+        </label>
+
+        <br>
+        <label>Количество книг на странице:
+            <select id="booksPerPage" name="books_per_page" onchange="updatePageOptions()">
+                <option th:selected="${5 == booksPerPage}" value="5">5</option>
+                <option th:selected="${10 == booksPerPage}" value="10">10</option>
+                <option th:selected="${15 == booksPerPage}" value="15">15</option>
+                <option th:selected="${20 == booksPerPage}" value="20">20</option>
+            </select>
+        </label>
+
+        <br>
+        <label>Номер страницы:
+            <select id="pageSelect" name="page">
+                <!-- Опции будут динамически добавлены с использованием JavaScript -->
+            </select>
+        </label>
+
+        <br>
+        <input type="submit" value="Показать" />
+    </form>
+
+    <br>
+
+    <form method="GET" action="/books">
+        <label for="showAll"></label>
+        <input type="hidden" name="show_all" value="true">
+        <input type="submit" id="showAll" value="Показать все книги">
+    </form>
+
+    <hr>
+    <a href="/books/new">Добавить книгу</a>
+    <br>
+    <a href="/people">Люди</a>
+
+
+    <script th:inline="javascript">
+        /* Получаем количество книг на странице и номер страницы из Thymeleaf-модели */
+        let booksPerPage = [[${booksPerPage}]];
+        let currentPage = [[${page}]];
+
+        /* Динамически обновляет список страниц при изменении "Количество книг на странице" */
+        function updatePageOptions() {
+            let booksPerPageSelect = document.getElementById('booksPerPage');
+            booksPerPage = booksPerPageSelect.options[booksPerPageSelect.selectedIndex].value;
+
+            let totalPages = [[${booksCount}]]; // Общее количество книг в базе данных, переданное из модели
+            let pageSelect = document.getElementById('pageSelect');
+            pageSelect.innerHTML = ''; // Очистить текущие опции
+
+            for (let i = 1; i <= Math.ceil(totalPages / booksPerPage); i++) {
+                let option = document.createElement('option');
+                option.value = i - 1;
+                option.text = i;
+                if (i === currentPage + 1) {
+                    option.selected = true; // Устанавливаем выбранным текущую страницу
+                }
+                pageSelect.add(option);
+            }
+        }
+
+        /* Вызов функции для начальной инициализации списка страниц при загрузке страницы */
+        document.addEventListener('DOMContentLoaded', function() {
+            updatePageOptions();
+        });
+    </script>
+
+</body>
+</html>
